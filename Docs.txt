@@ -1,0 +1,290 @@
+Machine Learning Models:
+
+-> four machine learning models:
+
+    Bernoulli Naive Bayes
+    Multinomial Naive Bayes
+    Linear Support Vector Classification (SVC)
+    Logistic Regression
+
+Each of these models is a different algorithm for classification.
+
+1. Bernoulli Naive Bayes Model:
+
+bnb_model = BernoulliNB()
+bnb_model.fit(x_train, y_train)
+TweetSweeper.evaluate(bnb_model, x_test, y_test)
+
+    bnb_model = BernoulliNB(): This initializes a Bernoulli Naive Bayes model, which is typically used for binary/Boolean features. It is based on the assumption that the features are binary (0 or 1). However, in this case, since the input vectors (features) have float values (the TF-IDF scores), the model will binzarize the features. This means the model will treat the feature values as either 0 or 1 based on a threshold (usually 0.5), where values greater than or equal to 0.5 are treated as 1 and others as 0.
+
+    bnb_model.fit(x_train, y_train): This trains the Bernoulli Naive Bayes model on the training dataset (x_train and y_train). x_train is the feature set, and y_train is the target (sentiment labels).
+
+    TextCleaner.evaluate(bnb_model, x_test, y_test): This evaluates the trained model on the test dataset (x_test and y_test) and prints the evaluation metrics. These metrics include precision, recall, F1-score, accuracy, and support (for each class).
+
+2. Evaluation Metrics:
+
+The output of the evaluation gives several key metrics to assess the model's performance. These are:
+
+    Precision: The ratio of true positives (correctly predicted instances of a class) to all predicted positives (both correctly and incorrectly predicted as that class).
+        Formula: Precision = TP / (TP + FP)
+
+    Recall: The ratio of true positives to all actual positives (instances that truly belong to the class, whether predicted correctly or not).
+        Formula: Recall = TP / (TP + FN)
+
+    F1-score: The harmonic mean of precision and recall. It balances both metrics and is useful when you have an uneven class distribution.
+        Formula: F1 = 2 * (Precision * Recall) / (Precision + Recall)
+
+    Accuracy: The ratio of the number of correct predictions to the total number of predictions.
+        Formula: Accuracy = (TP + TN) / (TP + TN + FP + FN)
+
+    Support: The number of actual occurrences of each class in the dataset (i.e., how many instances of each class are present in the true labels).
+
+3. Output of the Evaluation:
+
+Here’s what the output tells:
+
+            precision    recall  f1-score   support
+
+           0       0.88      0.05      0.10      1562
+           1       0.90      0.25      0.39      1735
+           2       0.44      0.98      0.60      2200
+
+    accuracy                           0.49      5497
+   macro avg       0.74      0.43      0.37      5497
+weighted avg       0.71      0.49      0.39      5497
+
+    Class 0, Class 1, Class 2: These represent the classes in  dataset, which are  different sentiment labels (e.g., positive, negative, neutral).
+
+    For each class, you have precision, recall, F1-score, and support values:
+        Class 0 (likely the "negative" sentiment class): Precision is 0.88, but recall is very low (0.05). This means that although the model correctly classifies 88% of the negative instances it predicts, it only identifies 5% of the actual negative instances. The F1-score of 0.10 reflects this poor balance between precision and recall.
+        Class 1 (likely the "neutral" sentiment class): Precision is 0.90, and recall is 0.25. The F1-score of 0.39 is higher than for Class 0 but still not great.
+        Class 2 (likely the "positive" sentiment class): Precision is low (0.44), but recall is very high (0.98). This indicates that the model can correctly identify almost all of the actual positive instances but frequently misclassifies some non-positive instances as positive. The F1-score of 0.60 reflects this balance.
+
+    Overall accuracy: The model’s overall accuracy is 49%, which is low. This suggests the model is not performing very well across all classes, as the accuracy is far from perfect.
+
+    Macro average: This is the unweighted average of precision, recall, and F1-score across all classes. It helps to evaluate the model without being biased by class size.
+        The macro average recall is 0.43, which indicates that the model is generally failing to correctly predict the positive instances for most classes.
+
+    Weighted average: This averages the precision, recall, and F1-score across all classes, but it takes the support (number of true instances for each class) into account. This is typically more useful when dealing with imbalanced classes.
+
+
+===============================================================================================================================================================================================
+
+
+2. The Multinomial Naive Bayes (MNB) model is another classification algorithm, particularly suited for discrete features, such as word counts or TF-IDF scores. It can handle both integer and fractional counts (which is the case for TF-IDF features), making it a good choice for text classification tasks like this one.
+
+
+mnb_model = MultinomialNB()
+mnb_model.fit(x_train, y_train)
+TextCleaner.evaluate(mnb_model, x_test, y_test)
+
+    mnb_model = MultinomialNB(): Initializes the Multinomial Naive Bayes model. This model works well with datasets where features (such as words in a document) are counts or frequencies, which fits well with the TF-IDF representation of the text.
+
+    mnb_model.fit(x_train, y_train): This fits the Multinomial Naive Bayes model to the training data (x_train and y_train). Here, x_train contains the TF-IDF vectors (features), and y_train contains the sentiment labels (targets).
+
+    TextCleaner.evaluate(mnb_model, x_test, y_test): This evaluates the trained model on the test data (x_test and y_test). The evaluate function computes various evaluation metrics, such as precision, recall, F1-score, accuracy, and support for each class.
+
+Output Analysis:
+
+              precision    recall  f1-score   support
+
+           0       0.83      0.32      0.46      1562
+           1       0.79      0.54      0.64      1735
+           2       0.52      0.88      0.65      2200
+
+    accuracy                           0.61      5497
+   macro avg       0.71      0.58      0.58      5497
+weighted avg       0.69      0.61      0.59      5497
+
+key metrics:
+
+    Class 0 (Sentiment: Negative):
+        Precision: 0.83 - 83% of the predictions for this class are correct.
+        Recall: 0.32 - The model correctly identifies 32% of all actual negative instances in the dataset. This is relatively low, meaning it misses many negative instances.
+        F1-score: 0.46 - A balance between precision and recall for class 0. It's not great, as recall is quite low.
+
+    Class 1 (Sentiment: Neutral):
+        Precision: 0.79 - 79% of the predictions for this class are correct.
+        Recall: 0.54 - The model correctly identifies 54% of the actual neutral instances.
+        F1-score: 0.64 - This is a decent F1-score, as recall is higher than class 0, meaning the model does a better job predicting neutral instances.
+
+    Class 2 (Sentiment: Positive):
+        Precision: 0.52 - The model correctly predicts 52% of the instances as positive, which is lower than for the other classes.
+        Recall: 0.88 - However, the recall is very high, meaning the model is very good at identifying positive instances (it catches 88% of all positive instances).
+        F1-score: 0.65 - The balance between precision and recall is much better here, but still not ideal due to the low precision.
+
+    Overall accuracy: The overall accuracy of the model is 61%, which indicates that the model is performing better than random guessing (which would be close to 33% for a 3-class problem).
+
+    Macro average:
+        Precision: 0.71 - The average precision across all classes.
+        Recall: 0.58 - The average recall across all classes. This suggests that the model isn't good at identifying all the classes, as recall is fairly low.
+        F1-score: 0.58 - The average F1-score across all classes, reflecting the overall model performance.
+
+    Weighted average:
+        Precision: 0.69 - This is the weighted average precision, which gives more importance to larger classes.
+        Recall: 0.61 - Similarly, the weighted recall is slightly better than the macro recall.
+        F1-score: 0.59 - A slight improvement compared to the macro average F1-score, reflecting the weighted average of the performance.
+
+
+The Multinomial Naive Bayes model performs better than the Bernoulli Naive Bayes model, with an overall accuracy of 61% compared to 49%. This improvement is likely due to the model’s ability to handle the continuous and fractional values in the TF-IDF vectors.
+
+    Strengths: The model performs reasonably well in predicting the "positive" sentiment (high recall for class 2).
+    Weaknesses: The recall for class 0 (negative sentiment) is very low, indicating that the model misses a lot of negative sentiment instances. Precision for the positive sentiment is also relatively low, meaning the model incorrectly classifies many non-positive instances as positive.
+
+
+===============================================================================================================================================================================================
+
+3. The Linear Support Vector Classification (LinearSVC) model is a linear classifier based on Support Vector Machines (SVM). It's particularly effective for high-dimensional datasets like text classification because it maximizes the margin between different classes while handling large feature spaces.
+
+
+svc_model = LinearSVC(class_weight=None, multi_class='ovr', random_state=TextCleaner.STATE)
+svc_model.fit(x_train, y_train)
+TextCleaner.evaluate(svc_model, x_test, y_test)
+
+
+    svc_model = LinearSVC(...): Initializes the LinearSVC model.
+        class_weight=None: This means all classes are treated equally (no class imbalance correction is applied).
+        multi_class='ovr': The one-vs-rest (OvR) strategy is used for multi-class classification, meaning that a separate classifier is trained for each class, and the one with the highest score is chosen as the predicted class.
+        random_state=TextCleaner.STATE: Ensures reproducibility of the model's results.
+
+    svc_model.fit(x_train, y_train): This fits the Linear SVC model to the training data (x_train and y_train), where x_train contains the TF-IDF feature vectors and y_train contains the sentiment labels.
+
+    TextCleaner.evaluate(svc_model, x_test, y_test): This evaluates the model on the test data (x_test and y_test) and computes the performance metrics like precision, recall, F1-score, accuracy, and support for each class.
+
+Output Analysis:
+
+              precision    recall  f1-score   support
+
+           0       0.68      0.65      0.66      1562
+           1       0.71      0.76      0.73      1735
+           2       0.65      0.63      0.64      2200
+
+    accuracy                           0.68      5497
+   macro avg       0.68      0.68      0.68      5497
+weighted avg       0.68      0.68      0.68      5497
+
+Key Metrics Analysis:
+
+    Class 0 (Sentiment: Negative):
+        Precision: 0.68 - 68% of predictions for negative sentiment are correct.
+        Recall: 0.65 - The model correctly identifies 65% of actual negative instances, showing a reasonable performance but still missing a portion of negative sentiments.
+        F1-score: 0.66 - The balance between precision and recall for negative sentiment is moderate.
+
+    Class 1 (Sentiment: Neutral):
+        Precision: 0.71 - 71% of predictions for neutral sentiment are correct.
+        Recall: 0.76 - The model correctly identifies 76% of actual neutral instances, showing a better performance for this class.
+        F1-score: 0.73 - The F1-score is  good for neutral sentiment, with both precision and recall being fairly balanced and strong.
+
+    Class 2 (Sentiment: Positive):
+        Precision: 0.65 - The model correctly predicts 65% of positive sentiment instances.
+        Recall: 0.63 - The recall is 63%, meaning that it correctly identifies 63% of actual positive instances.
+        F1-score: 0.64 - The F1-score indicates a somewhat average performance for this class.
+
+    Overall Accuracy: The overall accuracy of the model is 68%, indicating that it performs better than the Bernoulli Naive Bayes (49%) and Multinomial Naive Bayes (61%) models.
+
+    Macro average:
+        Precision: 0.68 - This reflects the average precision across all classes, which is moderate.
+        Recall: 0.68 - The recall is also moderate, showing that the model is doing a reasonably good job identifying instances across all classes.
+        F1-score: 0.68 - The F1-score is similarly balanced across the three classes, suggesting a decent model overall.
+
+    Weighted average:
+        Precision: 0.68 - The weighted precision is the same as the macro precision, showing balanced importance across classes.
+        Recall: 0.68 - The weighted recall is similar to the macro recall, indicating that the model performs similarly for all classes, taking the class distribution into account.
+        F1-score: 0.68 - The weighted F1-score is also consistent with the macro average.
+
+Conclusion:
+
+The Linear Support Vector Classification (SVC) model performs better than both the Bernoulli Naive Bayes and Multinomial Naive Bayes models, with an accuracy of 68%. This is a strong result, especially considering that SVMs generally work well with text classification tasks due to their ability to handle high-dimensional feature spaces (like TF-IDF representations).
+
+    Strengths: The model shows a solid performance in terms of precision, recall, and F1-score, especially for the neutral class (class 1), with recall being relatively high for that class.
+    Weaknesses: While the model does well in most cases, it shows slightly lower performance in classifying positive (class 2) and negative (class 0) sentiments compared to neutral ones.
+
+
+
+===============================================================================================================================================================================================================================
+
+
+4. The Logistic Regression model is a popular linear model used for classification tasks. It predicts the probability of an instance belonging to a particular class. In this case, it's used for multi-class sentiment classification (negative, neutral, positive).
+
+lr_model = LogisticRegression(solver='liblinear', max_iter=1000, random_state=TextCleaner.STATE)
+lr_model.fit(x_train, y_train)
+TextCleaner.evaluate(lr_model, x_test, y_test)
+
+    lr_model = LogisticRegression(...): Initializes the Logistic Regression model.
+        solver='liblinear': Specifies the solver used to optimize the model's parameters. The liblinear solver is a good choice for small datasets and works well for binary or multi-class problems.
+        max_iter=1000: Sets the maximum number of iterations to converge. This ensures the model has enough iterations to find the optimal solution.
+        random_state=TextCleaner.STATE: Ensures reproducibility of the results.
+
+    lr_model.fit(x_train, y_train): This fits the logistic regression model to the training data (x_train for the feature vectors and y_train for the sentiment labels).
+
+    TextCleaner.evaluate(lr_model, x_test, y_test): This evaluates the model on the test set (x_test and y_test) and prints out the evaluation metrics such as precision, recall, F1-score, accuracy, and support for each class.
+
+Output Analysis:
+
+              precision    recall  f1-score   support
+
+           0       0.73      0.58      0.65      1562
+           1       0.75      0.73      0.74      1735
+           2       0.63      0.73      0.68      2200
+
+    accuracy                           0.69      5497
+   macro avg       0.70      0.68      0.69      5497
+weighted avg       0.70      0.69      0.69      5497
+
+Key mtrics:
+
+    Class 0 (Sentiment: Negative):
+        Precision: 0.73 - The model correctly predicted 73% of negative sentiment instances.
+        Recall: 0.58 - The model correctly identified 58% of actual negative sentiment instances, which indicates it's missing some negative cases.
+        F1-score: 0.65 - A moderate F1-score, showing the trade-off between precision and recall.
+
+    Class 1 (Sentiment: Neutral):
+        Precision: 0.75 - The model correctly predicted 75% of neutral sentiment instances.
+        Recall: 0.73 - The model correctly identified 73% of actual neutral sentiment instances, showing a good balance of precision and recall.
+        F1-score: 0.74 - A strong F1-score, suggesting the model does well with neutral sentiment.
+
+    Class 2 (Sentiment: Positive):
+        Precision: 0.63 - The model correctly predicted 63% of positive sentiment instances.
+        Recall: 0.73 - The model correctly identified 73% of actual positive sentiment instances, which indicates it does better in identifying positives than it does in predicting them.
+        F1-score: 0.68 - The F1-score suggests there is room for improvement in balancing precision and recall for positive sentiment.
+
+    Overall Accuracy: The overall accuracy of the model is 69%, which is a bit better than LinearSVC (68%). 
+
+    Macro average:
+        Precision: 0.70 - This is the average precision across all classes.
+        Recall: 0.68 - The recall average is slightly lower, which means that the model may be missing some instances, particularly in the negative sentiment class.
+        F1-score: 0.69 - The F1-score indicates that the overall performance of the model is decent across all classes.
+
+    Weighted average:
+        Precision: 0.70 - The weighted precision is similar to the macro average, showing that all classes are treated equally.
+        Recall: 0.69 - The weighted recall is slightly higher than the macro average, reflecting a bit better performance when taking the class distribution into account.
+        F1-score: 0.69 - The weighted F1-score is also decent, with good balance across the classes.
+
+Conclusion:
+
+The Logistic Regression model shows solid performance with an accuracy of 69%, with reasonably good precision, recall, and F1-scores across all sentiment classes. It does particularly well with neutral sentiment (class 1), which has the highest recall and F1-score, but the model struggles a bit with negative sentiment (class 0), where recall is lower.
+
+    Strengths: Logistic regression is a reliable model for multi-class classification and provides balanced performance with a good trade-off between precision and recall. It also performs reasonably well for neutral sentiment.
+    Weaknesses: The model's recall for negative sentiment is somewhat lower, meaning it misses some negative instances.
+
+
+===============================================================================================================================================================================================================================
+FINAL CELL OR SPARK CONTEXT 
+
+Goal:
+
+Processes tweets using PySpark to apply sentiment analysis:
+
+    1. It reads the tweets from a CSV file into a Spark DataFrame.
+    2. It defines a function to clean and vectorize the tweet text, predict its sentiment, and then return the predicted sentiment (positive, negative, neutral).
+    3. The function is registered as a Spark UDF. This allows you to apply the sentiment analysis function to each row of the DataFrame (in parallel).  
+    4. The UDF is applied to each tweet in the DataFrame, and the sentiment prediction is stored in a new column (result). This means that for each tweet, the sentiment will be computed and stored in the "result" column as "positive", "negative", "neutral".
+    5. Finally, it shows the first 100 rows of the results (the tweet and its predicted sentiment).
+
+Important Notes:
+
+    Ensure that the models (vectoriser and mnb_model) are pre-trained before running this cell.
+    The code assumes that TextCleaner and the necessary libraries are available and correctly set up.
+
+
+
